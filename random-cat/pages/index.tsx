@@ -1,16 +1,25 @@
-import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { GetServerSideProps, NextPage } from "next";
+import { useState } from "react";
+import styles from "./index.module.css";
 
-const IndexPage: NextPage = () => {
-    const [imageUrl, setImageUrl] = useState("");
-    const [loading, setLoading] = useState(true);
+type Props = {
+    initialImageUrl: string;
+};
 
-    useEffect(() => {
-        fetchImage().then((newImage) => {
-            setImageUrl(newImage.url);
-            setLoading(false);
-        });
-    }, []);
+const IndexPage: NextPage<Props> = ({ initialImageUrl }) => {
+    const [imageUrl, setImageUrl] = useState(initialImageUrl);
+    const [loading, setLoading] = useState(false);
+
+// const IndexPage: NextPage = () => {
+//     const [imageUrl, setImageUrl] = useState("");
+//     const [loading, setLoading] = useState(true);
+
+//     useEffect(() => {
+//         fetchImage().then((newImage) => {
+//             setImageUrl(newImage.url);
+//             setLoading(false);
+//         });
+//     }, []);
     
     //ボタンをクリックしたときに画像を読み込む
     const handleClick = async () => {
@@ -20,13 +29,22 @@ const IndexPage: NextPage = () => {
         setLoading(false);
     };
     return (
-        <div>
-            <button onClick={handleClick}>他のにゃんこも見る</button>
-            <div>{loading || <img src={imageUrl}/>}</div>
+        <div className={styles.page}>
+            <button onClick={handleClick} className={styles.button}>他のにゃんこも見る</button>
+            <div className={styles.frame}>{loading || <img src={imageUrl} className={styles.img}/>}</div>
         </div>
     );
 };
 export default IndexPage;
+
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+    const image = await fetchImage();
+    return {
+        props: {
+            initialImageUrl: image.url,
+        },
+    };
+};
 
 type Image = {
     url: string;
