@@ -32,7 +32,7 @@ type Image = {
     url: string;
 };
 const fetchImage = async (): Promise<Image> => {
-    const res = await fetch("https://api.thecatapi.com/v1/images/search");
+    const res = await fetch("https://api.thecatapi.com/v1/images/search?breed_ids=bsho");
     const images: unknown = await res.json();
     if (!Array.isArray(images)) {
         throw new Error("猫の画像が取得できませんでした");
